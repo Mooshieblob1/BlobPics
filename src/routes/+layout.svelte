@@ -1,7 +1,6 @@
 <!-- src/routes/+layout.svelte -->
 <script>
 	import '../app.css';
-	export let data;
 </script>
 
 <main class="min-h-screen bg-neutral-950 font-sans text-white">

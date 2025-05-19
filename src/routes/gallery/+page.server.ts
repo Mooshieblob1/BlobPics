@@ -1,8 +1,8 @@
 // src/routes/gallery/+page.server.ts
 import { databases, storage } from '$lib/appwrite';
-import type { PageServerLoad } from './$types';
+import type { ServerLoad } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async () => {
+export const load: ServerLoad = async () => {
 	const collectionId = '682b8a1a003b15611710';
 	const databaseId = '682b89cc0016319fcf30';
 	const bucketId = '682b8a3a001fb3d3e9f2';

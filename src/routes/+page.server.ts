@@ -1,28 +1,45 @@
-import { Client, Databases, Storage } from 'appwrite';
 import type { ServerLoad } from '@sveltejs/kit';
 
+const projectId = '682b826b003d9cba9018';
+const databaseId = '682b89cc0016319fcf30';
+const collectionId = '682cf95a00397776afa6';
+const bucketId = '682cfa1a0016991596f5';
+
+type WebpDoc = {
+	$id: string;
+	prompt: string;
+	webpImageId: string;
+};
+
 export const load: ServerLoad = async () => {
-	const client = new Client()
-		.setEndpoint('https://syd.cloud.appwrite.io/v1')
-		.setProject('682b826b003d9cba9018')
-		.setKey(process.env.APPWRITE_API_KEY); // API key must have read access to DB & Storage
+	const apiKey = process.env.APPWRITE_API_KEY;
+	if (!apiKey) throw new Error('Missing APPWRITE_API_KEY');
 
-	const databases = new Databases(client);
-	const storage = new Storage(client);
+	// Fetch metadata documents
+	const res = await fetch(
+		`https://syd.cloud.appwrite.io/v1/databases/${databaseId}/collections/${collectionId}/documents`,
+		{
+			headers: {
+				'X-Appwrite-Project': projectId,
+				'X-Appwrite-Key': apiKey
+			}
+		}
+	);
 
-	const databaseId = '682b89cc0016319fcf30';
-	const collectionId = '682cf95a00397776afa6'; // WebP metadata
-	const bucketId = '682cfa1a0016991596f5'; // WebP bucket
+	if (!res.ok) {
+		const error = await res.text();
+		console.error('❌ Failed to fetch documents:', error);
+		throw new Error('Appwrite document fetch failed');
+	}
 
-	const images = await databases.listDocuments(databaseId, collectionId);
+	const data = await res.json();
+	const docs = data.documents as WebpDoc[];
 
-	const mapped = images.documents.map((doc) => ({
+	const gallery = docs.map((doc) => ({
 		id: doc.$id,
 		prompt: doc.prompt,
-		imageUrl: storage.getFilePreview(bucketId, doc.webpImageId)
+		imageUrl: `https://syd.cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${doc.webpImageId}/preview?project=${projectId}`
 	}));
 
-	return {
-		gallery: mapped
-	};
+	return { gallery };
 };

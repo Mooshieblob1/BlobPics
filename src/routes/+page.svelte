@@ -1,17 +1,75 @@
-<!-- src/routes/+page.svelte -->
-<script>
-	import { goto } from '$app/navigation';
+<script lang="ts">
+	/* Props coming from +page.server.ts */
+	let {
+		data
+	}: {
+		data: { gallery: { id: string; imageUrl: string; prompt: string }[] };
+	} = $props();
 </script>
 
-<section class="flex min-h-[80vh] flex-col items-center justify-center gap-6 px-4 text-center">
-	<h1 class="text-4xl font-bold text-yellow-400 sm:text-6xl">blobpics.tech</h1>
-	<p class="max-w-xl text-neutral-300">
-		Showcase your best AI-generated creations in a fast, beautiful, responsive gallery.
-	</p>
-	<button
-		on:click={() => goto('/gallery')}
-		class="rounded-lg bg-yellow-400 px-6 py-3 font-semibold text-black transition hover:bg-yellow-300"
+<!-- === FULL-SCREEN GRID === -->
+<div class="relative h-screen w-screen overflow-hidden bg-black">
+	<div
+		class="absolute inset-0 grid grid-cols-2 gap-[2px] sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
 	>
-		View Gallery
-	</button>
-</section>
+		{#each data.gallery as item, i}
+			<img
+				src={item.imageUrl}
+				alt={item.prompt}
+				draggable={false}
+				class={`h-full w-full object-cover brightness-[35%] filter motion-safe:animate-[pan_${
+					28 + (i % 6)
+				}s_ease-in-out_infinite]`}
+			/>
+		{/each}
+	</div>
+
+	<!-- === SKEWED DARK OVERLAY === -->
+	<div class="pointer-events-none absolute inset-0 z-10 overflow-hidden">
+		<div
+			class="absolute inset-0 bg-black/60"
+			style="transform: skewY(-4deg); transform-origin: top left;"
+		/>
+	</div>
+
+	<!-- === CENTRE LOGO === -->
+	<div class="relative z-20 flex h-full w-full items-center justify-center">
+		<h1
+			class="animate-logoGlow text-5xl font-bold text-yellow-400 drop-shadow-[0_0_8px_#fbc21b] select-none sm:text-6xl"
+		>
+			BlobPics
+		</h1>
+	</div>
+</div>
+
+<style>
+	/* Slow pan keyframe (same for every img; duration staggered via inline Tailwind) */
+	@keyframes pan {
+		0%,
+		100% {
+			transform: scale(1.1) translate(0, 0);
+		}
+		50% {
+			transform: scale(1.1) translate(-12px, -12px);
+		}
+	}
+
+	/* Glowing logo pulse */
+	@keyframes logoGlow {
+		0%,
+		100% {
+			text-shadow:
+				0 0 8px #fbc21b,
+				0 0 20px #fbc21b99;
+		}
+		50% {
+			text-shadow:
+				0 0 14px #fbc21b,
+				0 0 32px #fbc21b;
+		}
+	}
+
+	.animate-logoGlow {
+		animation: logoGlow 2.4s ease-in-out infinite;
+	}
+</style>

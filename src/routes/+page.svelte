@@ -1,6 +1,5 @@
 <script lang="ts">
 	// Props coming from +page.server.ts
-	// The `data` prop contains a gallery array with objects that have `id`, `imageUrl`, and `prompt` properties.
 	let {
 		data
 	}: {
@@ -8,12 +7,11 @@
 	} = $props();
 
 	// Function to shuffle the gallery array randomly.
-	// This ensures the images are displayed in a random order.
 	function shuffleArray<T>(array: T[]): T[] {
 		return array
-			.map((item) => ({ item, sort: Math.random() })) // Assign a random sort value to each item.
-			.sort((a, b) => a.sort - b.sort) // Sort the array based on the random sort value.
-			.map(({ item }) => item); // Extract the original items in the new order.
+			.map((item) => ({ item, sort: Math.random() }))
+			.sort((a, b) => a.sort - b.sort)
+			.map(({ item }) => item);
 	}
 
 	// Shuffle the gallery array and store it in `shuffledGallery`.
@@ -21,26 +19,58 @@
 
 	// Maximum number of columns at largest breakpoint
 	const maxColumns = 8;
+	
+	// Number of images per column for the film roll effect
+	const imagesPerColumn = 10;
+
+	// Create arrays of images for each column
+	const columnImages = Array(maxColumns).fill(0).map((_, colIndex) => {
+		// Create a different sequence of images for each column
+		return shuffleArray([...data.gallery]).slice(0, imagesPerColumn);
+	});
 </script>
 
 <!-- === FULL-SCREEN GRID === -->
 <div class="relative h-screen w-screen overflow-hidden bg-black">
-	<!-- Grid container for displaying images -->
+	<!-- Grid container for displaying image columns -->
 	<div
-		class="absolute inset-0 grid auto-rows-[20vh] grid-cols-2 gap-[2px] sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8"
+		class="absolute inset-0 grid grid-cols-2 gap-[2px] sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8"
 	>
-		<!-- Generate a grid of images. The number of images is calculated dynamically. -->
-		{#each Array(Math.ceil((100 / 20) * maxColumns)) as _, i}
-			<!-- Dynamically set image source and alt text from shuffled gallery -->
-			<!-- Disable dragging of images -->
-			<img
-				src={shuffledGallery[i % shuffledGallery.length].imageUrl}
-				alt={shuffledGallery[i % shuffledGallery.length].prompt}
-				draggable={false}
-				class={`h-full w-full object-cover brightness-[35%] filter motion-safe:animate-[pan_${
-					28 + (i % 6) /* Stagger animation duration for each image */
-				}s_ease-in-out_infinite]`}
-			/>
+		<!-- Create columns of scrolling images -->
+		{#each Array(maxColumns) as _, colIndex}
+			{@const animationDuration = 30 + (colIndex % 5) * 5}
+			{@const direction = colIndex % 2 === 0 ? 'down' : 'up'}
+			
+			<div class="film-column overflow-hidden">
+				<div 
+					class={`film-strip film-roll-${direction}`} 
+					style={`animation-duration: ${animationDuration}s;`}
+				>
+					<!-- Original set of images -->
+					{#each columnImages[colIndex] as image}
+						<div class="h-[20vh]">
+							<img
+								src={image.imageUrl}
+								alt={image.prompt}
+								draggable={false}
+								class="h-full w-full object-cover brightness-[35%] filter"
+							/>
+						</div>
+					{/each}
+					
+					<!-- Duplicate the same images for seamless loop -->
+					{#each columnImages[colIndex] as image}
+						<div class="h-[20vh]">
+							<img
+								src={image.imageUrl}
+								alt={image.prompt}
+								draggable={false}
+								class="h-full w-full object-cover brightness-[35%] filter"
+							/>
+						</div>
+					{/each}
+				</div>
+			</div>
 		{/each}
 	</div>
 
@@ -49,7 +79,6 @@
 
 	<!-- === CENTRE LOGO === -->
 	<div class="relative z-20 flex h-full w-full flex-col items-center justify-center">
-		<!-- The main logo of the page with a popping animation. -->
 		<h1
 			class="logo mb-6 text-5xl font-bold text-yellow-400 drop-shadow-[0_0_8px_#fbc21b] select-none sm:text-6xl md:text-7xl 2xl:text-8xl"
 		>
@@ -60,7 +89,6 @@
 			{/each}
 		</h1>
 
-		<!-- Gallery button -->
 		<a
 			href="/gallery"
 			class="rounded-lg bg-yellow-400 px-6 py-3 font-bold text-black shadow-lg transition-all duration-300 hover:bg-yellow-500 2xl:px-8 2xl:py-4 2xl:text-xl"
@@ -71,32 +99,64 @@
 </div>
 
 <style>
-	/* Slow pan keyframe animation for images.
-	   All images use the same animation, but the duration is staggered via inline Tailwind. */
-	@keyframes pan {
-		0%,
-		100% {
-			transform: scale(1.1) translate(0, 0); /* Slight zoom and no translation at start/end. */
+	/* Film column container */
+	.film-column {
+		position: relative;
+		overflow: hidden;
+		height: 100%;
+	}
+
+	/* Film strip containing all images */
+	.film-strip {
+		position: absolute;
+		width: 100%;
+	}
+
+	/* Film roll animations */
+	.film-roll-down, .film-roll-up {
+		animation-timing-function: linear;
+		animation-iteration-count: infinite;
+	}
+
+	.film-roll-down {
+		animation-name: filmRollDown;
+	}
+
+	.film-roll-up {
+		animation-name: filmRollUp;
+	}
+
+	@keyframes filmRollDown {
+		0% {
+			transform: translateY(0);
 		}
-		50% {
-			transform: scale(1.1) translate(-12px, -12px); /* Slight translation at the midpoint. */
+		100% {
+			transform: translateY(-50%); /* Move up by half the height */
+		}
+	}
+
+	@keyframes filmRollUp {
+		0% {
+			transform: translateY(-50%);
+		}
+		100% {
+			transform: translateY(0);
 		}
 	}
 
 	/* Popping animation for each letter */
 	@keyframes pop {
 		0% {
-			transform: scale(1); /* Normal size */
+			transform: scale(1);
 		}
 		50% {
-			transform: scale(1.3); /* Enlarged size */
+			transform: scale(1.3);
 		}
 		100% {
-			transform: scale(1); /* Back to normal size */
+			transform: scale(1);
 		}
 	}
 
-	/* Apply the popping animation to each letter */
 	.animate-pop {
 		animation: pop 1.2s ease-in-out infinite;
 		display: inline-block;

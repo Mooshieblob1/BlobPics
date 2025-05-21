@@ -46,7 +46,7 @@ BlobPics aims to provide an optimized browsing experience for showcasing images,
 - **Frontend**: SvelteKit, Tailwind CSS v4, Motion One, TypeScript
 - **Backend**: Appwrite (Functions, Storage, Database), Cloudflare Workers
 - **Image Processing**: Sharp (WebP preview generation)
-- **Dev Tools**: pnpm, Vercel (for deployment)
+- **Dev Tools**: pnpm, Cloudflare (for deployment)
 
 ## Development Status
 

@@ -13,7 +13,6 @@
 	let searchTerm = '';
 	let showSuggestions = false;
 
-	// Extract all unique tags with their counts
 	$: tagCounts = data.gallery.reduce(
 		(acc, item) => {
 			item.tags.forEach((tag) => {
@@ -24,13 +23,11 @@
 		{} as Record<string, number>
 	);
 
-	// Show all tags sorted by count when search is empty, or filter them when searching
 	$: filteredTags = Object.entries(tagCounts)
 		.filter(([tag]) => !searchTerm.trim() || tag.toLowerCase().includes(searchTerm.toLowerCase()))
-		.sort((a, b) => b[1] - a[1]) // Sort by count (descending)
-		.slice(0, 10); // Limit to 10 suggestions
+		.sort((a, b) => b[1] - a[1])
+		.slice(0, 10);
 
-	// Filter gallery based on exact tag match
 	$: filteredGallery = searchTerm
 		? data.gallery.filter((item) =>
 				item.tags.some((tag) => tag.toLowerCase() === searchTerm.toLowerCase())
@@ -49,7 +46,6 @@
 		`https://syd.cloud.appwrite.io/v1/storage/buckets/682b8a3a001fb3d3e9f2/files/${id}/view?project=682b826b003d9cba9018`;
 </script>
 
-<!-- Fixed header with translucent background -->
 <div
 	class="fixed top-0 left-0 z-50 w-full bg-black/70 px-4 py-3 text-center backdrop-blur-sm md:py-4"
 >
@@ -71,7 +67,6 @@
 				on:blur={() => setTimeout(() => (showSuggestions = false), 200)}
 				on:input={() => (showSuggestions = true)}
 			/>
-
 			{#if showSuggestions && filteredTags.length > 0}
 				<div class="absolute z-10 max-h-60 w-full overflow-y-auto rounded bg-zinc-800 shadow-lg">
 					{#each filteredTags as [tag, count]}
@@ -89,20 +84,20 @@
 	</div>
 </div>
 
-<!-- Spacer to offset fixed header -->
 <div class="pt-24 md:pt-28">
-	<!-- Gallery Grid -->
-	<div class="columns-1 gap-8 px-4 py-10 sm:columns-2 lg:columns-3">
-		{#each filteredGallery as item}
-			<button on:click={() => (selected = item)} class="group mb-4 block w-full text-left">
-				<img
-					src={previewUrl(item.previewImageId)}
-					alt={item.prompt}
-					draggable={false}
-					class="rounded shadow transition group-hover:brightness-110"
-				/>
-			</button>
-		{/each}
+	<div class="mx-auto max-w-screen-2xl px-4 py-10 sm:px-6 lg:px-8">
+		<div class="columns-1 gap-4 sm:columns-2 md:gap-6 lg:columns-3 xl:columns-4 2xl:columns-6">
+			{#each filteredGallery as item}
+				<button on:click={() => (selected = item)} class="group mb-4 block w-full text-left">
+					<img
+						src={previewUrl(item.previewImageId)}
+						alt={item.prompt}
+						draggable={false}
+						class="rounded shadow transition group-hover:brightness-110"
+					/>
+				</button>
+			{/each}
+		</div>
 	</div>
 	{#if filteredGallery.length === 0}
 		<div class="py-10 text-center text-white">
@@ -111,35 +106,31 @@
 	{/if}
 </div>
 
-<!-- Responsive Modal -->
 {#if selected}
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-2 sm:p-4"
 		on:click={() => (selected = null)}
 	>
 		<div
-			class="relative max-h-[90vh] w-full max-w-3xl overflow-auto rounded bg-zinc-900 p-3 text-white shadow-xl sm:p-4 md:p-6"
+			class="relative flex max-h-[90vh] w-full max-w-5xl flex-col items-center overflow-hidden rounded bg-zinc-900 p-4 text-white shadow-xl"
 			on:click|stopPropagation
 		>
-			<!-- Close button -->
 			<button
-				class="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white sm:top-3 sm:right-3 md:top-4 md:right-4"
+				class="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white"
 				on:click={() => (selected = null)}
 			>
 				✕
 			</button>
 
-			<!-- Image container -->
-			<div class="mt-2 overflow-hidden rounded">
-				<img
-					src={fullUrl(selected.originalImageId)}
-					alt={selected.prompt}
-					class="w-full object-contain"
-				/>
-			</div>
+			<!-- Image scales responsively -->
+			<img
+				src={fullUrl(selected.originalImageId)}
+				alt={selected.prompt}
+				class="h-auto max-h-[65vh] w-auto max-w-full object-contain"
+			/>
 
-			<!-- View original button -->
-			<div class="mt-3 flex items-center justify-end sm:mt-4">
+			<!-- View Original Button -->
+			<div class="mt-4 flex w-full justify-end">
 				<a
 					href={fullUrl(selected.originalImageId)}
 					target="_blank"
@@ -150,7 +141,7 @@
 			</div>
 
 			<!-- Tags -->
-			<div class="mt-3 flex flex-wrap gap-2 font-mono text-xs sm:mt-4">
+			<div class="mt-3 flex w-full flex-wrap gap-2 font-mono text-xs">
 				{#each selected.tags as tag}
 					<span
 						class="cursor-pointer rounded bg-zinc-700 px-2 py-1 hover:bg-zinc-600"

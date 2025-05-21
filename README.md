@@ -31,12 +31,16 @@ BlobPics aims to provide an optimized browsing experience for showcasing images,
 - Cron-triggered Appwrite Function support (e.g., every minute)
 - Environment variables securely loaded with `$env/static/private`
 - Image sorting and display shuffle logic
+- Search and filtering by tags/prompts
+- Image categorization and tagging system
 
 ### 🧪 In Progress
 
 - Image upload UI from frontend (via Appwrite SDK)
-- Search and filtering by tags/prompts
-- Image categorization and tagging system
+- User accounts and login with Supabase/Auth (future)
+- Favorite/save image functionality
+- View/download counters or analytics
+- Image upload UI from frontend (via Appwrite SDK)
 - User accounts and login with Supabase/Auth (future)
 - Favorite/save image functionality
 - View/download counters or analytics

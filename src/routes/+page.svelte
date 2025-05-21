@@ -27,12 +27,12 @@
 	// These breakpoints match common TailwindCSS breakpoints.
 	let numColumns = $derived.by(() => {
 		if (screenWidth === 0) return 2; // Default before clientWidth is bound or for SSR
-		if (screenWidth < 640) return 2;    // xs to sm
-		if (screenWidth < 768) return 3;    // sm to md
-		if (screenWidth < 1024) return 4;   // md to lg
-		if (screenWidth < 1280) return 6;   // lg to xl
-		if (screenWidth < 1536) return 7;   // xl to 2xl
-		return 8;                           // 2xl and larger
+		if (screenWidth < 640) return 2; // xs to sm
+		if (screenWidth < 768) return 3; // sm to md
+		if (screenWidth < 1024) return 4; // md to lg
+		if (screenWidth < 1280) return 6; // lg to xl
+		if (screenWidth < 1536) return 7; // xl to 2xl
+		return 8; // 2xl and larger
 	});
 
 	// Reactive calculation for column width
@@ -45,58 +45,61 @@
 	// Create arrays of images for each column, reactive to numColumns and data.gallery
 	let columnImages = $derived.by(() => {
 		if (!data?.gallery || numColumns <= 0 || data.gallery.length === 0) return [];
-		return Array(numColumns).fill(null).map(() => {
-			// Create a different sequence of images for each column
-			return shuffleArray([...data.gallery]).slice(0, imagesPerColumn);
-		});
+		return Array(numColumns)
+			.fill(null)
+			.map(() => {
+				// Create a different sequence of images for each column
+				return shuffleArray([...data.gallery]).slice(0, imagesPerColumn);
+			});
 	});
 </script>
 
 <!-- === FULL-SCREEN GRID === -->
 <div class="relative h-screen w-screen overflow-hidden bg-black" bind:clientWidth={screenWidth}>
 	<!-- Grid container for displaying image columns -->
-	{#if screenWidth > 0 && imageHeight > 0} <!-- Ensure dimensions are calculated before rendering grid -->
-	<div
-		class="absolute inset-0 grid gap-[2px]"
-		style={`grid-template-columns: repeat(${numColumns}, 1fr);`}
-	>
-		<!-- Create columns of scrolling images -->
-		{#each columnImages as imagesForThisColumn, colIndex (colIndex)}
-			{@const animationDuration = 30 + (colIndex % 5) * 5}
-			{@const direction = colIndex % 2 === 0 ? 'down' : 'up'}
-			
-			<div class="film-column overflow-hidden">
-				<div 
-					class={`film-strip film-roll-${direction}`} 
-					style={`animation-duration: ${animationDuration}s;`}
-				>
-					<!-- Original set of images -->
-					{#each imagesForThisColumn as image (image.id)}
-						<div style={`height: ${imageHeight}px; width: 100%;`}>
-							<img
-								src={image.imageUrl}
-								alt={image.prompt}
-								draggable={false}
-								class="h-full w-full object-cover brightness-[35%] filter"
-							/>
-						</div>
-					{/each}
-					
-					<!-- Duplicate the same images for seamless loop -->
-					{#each imagesForThisColumn as image (`${image.id}-duplicate`)}
-						<div style={`height: ${imageHeight}px; width: 100%;`}>
-							<img
-								src={image.imageUrl}
-								alt={image.prompt}
-								draggable={false}
-								class="h-full w-full object-cover brightness-[35%] filter"
-							/>
-						</div>
-					{/each}
+	{#if screenWidth > 0 && imageHeight > 0}
+		<!-- Ensure dimensions are calculated before rendering grid -->
+		<div
+			class="absolute inset-0 grid gap-[2px]"
+			style={`grid-template-columns: repeat(${numColumns}, 1fr);`}
+		>
+			<!-- Create columns of scrolling images -->
+			{#each columnImages as imagesForThisColumn, colIndex (colIndex)}
+				{@const animationDuration = 80 + (colIndex % 5) * 10}
+				{@const direction = colIndex % 2 === 0 ? 'down' : 'up'}
+
+				<div class="film-column overflow-hidden">
+					<div
+						class={`film-strip film-roll-${direction}`}
+						style={`animation-duration: ${animationDuration}s;`}
+					>
+						<!-- Original set of images -->
+						{#each imagesForThisColumn as image (image.id)}
+							<div style={`height: ${imageHeight}px; width: 100%;`}>
+								<img
+									src={image.imageUrl}
+									alt={image.prompt}
+									draggable={false}
+									class="h-full w-full object-cover brightness-[35%] filter"
+								/>
+							</div>
+						{/each}
+
+						<!-- Duplicate the same images for seamless loop -->
+						{#each imagesForThisColumn as image (`${image.id}-duplicate`)}
+							<div style={`height: ${imageHeight}px; width: 100%;`}>
+								<img
+									src={image.imageUrl}
+									alt={image.prompt}
+									draggable={false}
+									class="h-full w-full object-cover brightness-[35%] filter"
+								/>
+							</div>
+						{/each}
+					</div>
 				</div>
-			</div>
-		{/each}
-	</div>
+			{/each}
+		</div>
 	{/if}
 
 	<!-- === FULL PAGE DARK OVERLAY === -->
@@ -127,7 +130,7 @@
 	/* Film column container */
 	.film-column {
 		position: relative;
-		height: 100%; 
+		height: 100%;
 	}
 
 	/* Film strip containing all images */
@@ -137,7 +140,8 @@
 	}
 
 	/* Film roll animations */
-	.film-roll-down, .film-roll-up {
+	.film-roll-down,
+	.film-roll-up {
 		animation-timing-function: linear;
 		animation-iteration-count: infinite;
 	}

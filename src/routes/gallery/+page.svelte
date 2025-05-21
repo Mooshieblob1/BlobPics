@@ -1,84 +1,154 @@
 <script lang="ts">
-	// Define the type for the data prop received from the parent component
-	// This contains an array of gallery items with their IDs, prompts, and image references
 	export let data: {
 		gallery: {
 			id: string;
-			prompt: string; // The text prompt used to generate the image
-			previewImageId: string; // ID for the smaller preview image
-			originalImageId: string; // ID for the full-size original image
+			prompt: string;
+			previewImageId: string;
+			originalImageId: string;
+			tags: string[];
 		}[];
 	};
 
-	// Helper function to generate the URL for preview thumbnail images
-	// Takes an image ID and returns the complete Appwrite storage URL with preview parameters
+	let selected: (typeof data.gallery)[0] | null = null;
+	let searchTerm = '';
+	let showSuggestions = false;
+
+	// Extract all unique tags with their counts
+	$: tagCounts = data.gallery.reduce(
+		(acc, item) => {
+			item.tags.forEach((tag) => {
+				acc[tag] = (acc[tag] || 0) + 1;
+			});
+			return acc;
+		},
+		{} as Record<string, number>
+	);
+
+	// Show all tags sorted by count when search is empty, or filter them when searching
+	$: filteredTags = Object.entries(tagCounts)
+		.filter(([tag]) => !searchTerm.trim() || tag.toLowerCase().includes(searchTerm.toLowerCase()))
+		.sort((a, b) => b[1] - a[1]) // Sort by count (descending)
+		.slice(0, 10); // Limit to 10 suggestions
+
+	// Filter gallery based on exact tag match
+	$: filteredGallery = searchTerm
+		? data.gallery.filter((item) =>
+				item.tags.some((tag) => tag.toLowerCase() === searchTerm.toLowerCase())
+			)
+		: data.gallery;
+
+	function selectTag(tag: string) {
+		searchTerm = tag;
+		showSuggestions = false;
+	}
+
 	const previewUrl = (id: string) =>
 		`https://syd.cloud.appwrite.io/v1/storage/buckets/682cfa1a0016991596f5/files/${id}/preview?project=682b826b003d9cba9018`;
 
-	// Helper function to generate the URL for full-size original images
-	// Takes an image ID and returns the complete Appwrite storage URL with view parameters
 	const fullUrl = (id: string) =>
 		`https://syd.cloud.appwrite.io/v1/storage/buckets/682b8a3a001fb3d3e9f2/files/${id}/view?project=682b826b003d9cba9018`;
 </script>
 
 <!-- Fixed header with translucent background -->
-<!-- This header stays fixed at the top of the viewport while scrolling -->
 <div
 	class="fixed top-0 left-0 z-50 w-full bg-black/70 px-4 py-3 text-center backdrop-blur-sm md:py-4"
 >
-	<!-- Navigation link back to home page -->
-	<a href="/" class="inline-block">
-		<h1
-			class="hover:shadow-glow text-2xl font-bold text-yellow-500 transition duration-300 ease-in-out hover:text-yellow-400 md:text-3xl"
-		>
-			Blobpics
-		</h1>
-	</a>
-</div>
-
-<!-- Spacer div with padding to push content below the fixed header -->
-<div class="pt-16 md:pt-20">
-	<!-- Gallery Grid - Uses CSS columns for masonry-style layout -->
-	<!-- Responsive design with different column counts based on screen size -->
-	<div
-		class="columns-1 gap-4 px-3 py-6 sm:columns-2 sm:gap-6 sm:px-6 sm:py-8 md:gap-8 md:px-8 md:py-10 lg:columns-4 2xl:mx-auto 2xl:max-w-screen-2xl 2xl:columns-5"
-	>
-		<!-- Iterate through each gallery item to create image cards -->
-		{#each data.gallery as item}
-			<!-- Wrapping link that opens the full-size image in a new tab -->
-			<!-- Using 'group' class for hover effects that target child elements -->
-			<a
-				href={fullUrl(item.originalImageId)}
-				target="_blank"
-				rel="noopener noreferrer"
-				class="group relative mb-4 block break-inside-avoid overflow-hidden rounded-lg sm:mb-6 md:mb-10"
+	<div class="flex flex-col items-center justify-center gap-2">
+		<a href="/" class="inline-block">
+			<h1
+				class="hover:shadow-glow text-2xl font-bold text-yellow-500 transition duration-300 ease-in-out hover:text-yellow-400 md:text-3xl"
 			>
-				<!-- Preview image with lazy loading for performance -->
-				<!-- Slight darkening effect on hover via brightness-90 -->
-				<img
-					src={previewUrl(item.previewImageId)}
-					alt={item.prompt}
-					loading="lazy"
-					class="w-30vh h-full object-cover transition duration-300 ease-in-out group-hover:brightness-90"
-				/>
+				Blobpics
+			</h1>
+		</a>
+		<div class="relative w-full max-w-md">
+			<input
+				type="text"
+				bind:value={searchTerm}
+				placeholder="Search for exact tag..."
+				class="w-full rounded bg-zinc-800 px-3 py-1 text-white placeholder-zinc-400"
+				on:focus={() => (showSuggestions = true)}
+				on:blur={() => setTimeout(() => (showSuggestions = false), 200)}
+				on:input={() => (showSuggestions = true)}
+			/>
 
-				<!-- Caption overlay that appears on hover -->
-				<!-- Uses opacity transition to fade in when parent group is hovered -->
-				<div
-					class="absolute bottom-0 left-0 w-full bg-black/60 px-2 py-1.5 text-xs text-white opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 md:px-3 md:py-2 md:text-sm"
-				>
-					{item.prompt}
+			{#if showSuggestions && filteredTags.length > 0}
+				<div class="absolute z-10 max-h-60 w-full overflow-y-auto rounded bg-zinc-800 shadow-lg">
+					{#each filteredTags as [tag, count]}
+						<button
+							class="flex w-full items-center justify-between px-3 py-2 text-left text-white hover:bg-zinc-700"
+							on:mousedown|preventDefault={() => selectTag(tag)}
+						>
+							<span class="truncate">{tag}</span>
+							<span class="ml-2 text-sm text-zinc-400">{count}</span>
+						</button>
+					{/each}
 				</div>
-			</a>
-		{/each}
+			{/if}
+		</div>
 	</div>
 </div>
 
+<!-- Spacer to offset fixed header -->
+<div class="pt-24 md:pt-28">
+	<!-- Gallery Grid -->
+	<div class="columns-1 gap-8 px-4 py-10 sm:columns-2 lg:columns-3">
+		{#each filteredGallery as item}
+			<button on:click={() => (selected = item)} class="group mb-4 block w-full text-left">
+				<img
+					src={previewUrl(item.previewImageId)}
+					alt={item.prompt}
+					draggable={false}
+					class="rounded shadow transition group-hover:brightness-110"
+				/>
+			</button>
+		{/each}
+	</div>
+	{#if filteredGallery.length === 0}
+		<div class="py-10 text-center text-white">
+			<p>No images found with the exact tag "{searchTerm}"</p>
+		</div>
+	{/if}
+</div>
+
+<!-- Modal remains unchanged -->
+{#if selected}
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+		on:click={() => (selected = null)}
+	>
+		<div
+			class="w-full max-w-3xl rounded bg-zinc-900 p-6 text-white shadow-xl"
+			on:click|stopPropagation
+		>
+			<img
+				src={fullUrl(selected.originalImageId)}
+				alt={selected.prompt}
+				class="mb-4 w-full rounded"
+			/>
+			<div class="mb-4 flex items-center justify-end">
+				<a
+					href={fullUrl(selected.originalImageId)}
+					target="_blank"
+					class="rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black"
+				>
+					View Original
+				</a>
+			</div>
+			<div class="flex flex-wrap gap-2 font-mono text-xs">
+				{#each selected.tags as tag}
+					<span
+						class="cursor-pointer rounded bg-zinc-700 px-2 py-0.5 hover:bg-zinc-600"
+						on:click={() => (searchTerm = tag)}>{tag}</span
+					>
+				{/each}
+			</div>
+		</div>
+	</div>
+{/if}
+
 <style>
-	/* Custom hover effect for the site title */
-	/* Creates a yellow glow effect with multiple layers of text shadow */
-	/* Shadow intensity decreases with distance for a realistic glow effect */
-	.hover\:shadow-glow:hover {
+	.hover\\:shadow-glow:hover {
 		text-shadow:
 			0 0 10px rgba(250, 204, 21, 0.7),
 			0 0 20px rgba(250, 204, 21, 0.5),

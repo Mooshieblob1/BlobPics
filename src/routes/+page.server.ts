@@ -1,3 +1,6 @@
+import { APPWRITE_API_KEY } from '$env/static/private';
+// or:
+import { env } from '$env/dynamic/private';
 import type { ServerLoad } from '@sveltejs/kit';
 
 const projectId = '682b826b003d9cba9018';
@@ -12,7 +15,7 @@ type WebpDoc = {
 };
 
 export const load: ServerLoad = async () => {
-	const apiKey = process.env.APPWRITE_API_KEY;
+	const apiKey = APPWRITE_API_KEY;
 	if (!apiKey) throw new Error('Missing APPWRITE_API_KEY');
 
 	// Fetch metadata documents

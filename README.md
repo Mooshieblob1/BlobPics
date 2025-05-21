@@ -33,6 +33,7 @@ BlobPics aims to provide an optimized browsing experience for showcasing images,
 - Image sorting and display shuffle logic
 - Search and filtering by tags/prompts
 - Image categorization and tagging system
+- Image interrogator service hosted on fartcore's server
 
 ### 🧪 In Progress
 
@@ -51,6 +52,7 @@ BlobPics aims to provide an optimized browsing experience for showcasing images,
 - **Backend**: Appwrite (Functions, Storage, Database), Cloudflare Workers
 - **Image Processing**: Sharp (WebP preview generation)
 - **Dev Tools**: pnpm, Cloudflare (for deployment)
+- **Services**: Image interrogator hosted on fartcore's server
 
 ## Development Status
 

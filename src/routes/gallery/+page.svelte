@@ -16,10 +16,12 @@
 </script>
 
 <!-- Fixed header with translucent background -->
-<div class="fixed top-0 left-0 z-50 w-full bg-black/70 py-4 text-center backdrop-blur-sm">
+<div
+	class="fixed top-0 left-0 z-50 w-full bg-black/70 px-4 py-3 text-center backdrop-blur-sm md:py-4"
+>
 	<a href="/" class="inline-block">
 		<h1
-			class="hover:shadow-glow text-3xl font-bold text-yellow-500 transition duration-300 ease-in-out hover:text-yellow-400"
+			class="hover:shadow-glow text-2xl font-bold text-yellow-500 transition duration-300 ease-in-out hover:text-yellow-400 md:text-3xl"
 		>
 			Blobpics
 		</h1>
@@ -27,15 +29,17 @@
 </div>
 
 <!-- Add padding to push content below the fixed header -->
-<div class="pt-20">
+<div class="pt-16 md:pt-20">
 	<!-- Gallery Grid -->
-	<div class="columns-1 gap-8 px-50 py-10 sm:columns-2 lg:columns-3">
+	<div
+		class="columns-1 gap-4 px-3 py-6 sm:columns-2 sm:gap-6 sm:px-6 sm:py-8 md:gap-8 md:px-8 md:py-10 lg:columns-3"
+	>
 		{#each data.gallery as item}
 			<a
 				href={fullUrl(item.originalImageId)}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="group relative mb-10 block break-inside-avoid overflow-hidden rounded-lg"
+				class="group relative mb-4 block break-inside-avoid overflow-hidden rounded-lg sm:mb-6 md:mb-10"
 			>
 				<img
 					src={previewUrl(item.previewImageId)}
@@ -45,7 +49,7 @@
 				/>
 
 				<div
-					class="absolute bottom-0 left-0 w-full bg-black/60 px-3 py-2 text-sm text-white opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100"
+					class="absolute bottom-0 left-0 w-full bg-black/60 px-2 py-1.5 text-xs text-white opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 md:px-3 md:py-2 md:text-sm"
 				>
 					{item.prompt}
 				</div>

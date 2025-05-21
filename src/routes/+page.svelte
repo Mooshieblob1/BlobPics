@@ -45,13 +45,21 @@
 	<div class="pointer-events-none absolute inset-0 z-10 bg-black/60"></div>
 
 	<!-- === CENTRE LOGO === -->
-	<div class="relative z-20 flex h-full w-full items-center justify-center">
+	<div class="relative z-20 flex h-full w-full flex-col items-center justify-center">
 		<!-- The main logo of the page with a glowing animation. -->
 		<h1
-			class="animate-logoGlow text-5xl font-bold text-yellow-400 drop-shadow-[0_0_8px_#fbc21b] select-none sm:text-6xl"
+			class="animate-logoGlow mb-6 text-5xl font-bold text-yellow-400 drop-shadow-[0_0_8px_#fbc21b] select-none sm:text-6xl"
 		>
 			BlobPics
 		</h1>
+
+		<!-- Gallery button -->
+		<a
+			href="/gallery"
+			class="rounded-lg bg-yellow-400 px-6 py-3 font-bold text-black shadow-lg transition-all duration-300 hover:bg-yellow-500"
+		>
+			View Gallery
+		</a>
 	</div>
 </div>
 

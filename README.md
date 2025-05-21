@@ -41,10 +41,6 @@ BlobPics aims to provide an optimized browsing experience for showcasing images,
 - User accounts and login with Supabase/Auth (future)
 - Favorite/save image functionality
 - View/download counters or analytics
-- Image upload UI from frontend (via Appwrite SDK)
-- User accounts and login with Supabase/Auth (future)
-- Favorite/save image functionality
-- View/download counters or analytics
 
 ## Technology Stack
 
@@ -68,6 +64,45 @@ pnpm dev
 ```
 
 Ensure `.env` contains required private keys for Appwrite.
+
+## Customization
+
+### Image Scrolling Speed
+
+The homepage features a film-roll effect with scrolling image columns. You can customize the scrolling speed:
+
+- **Location**: In `/src/routes/+page.svelte` inside the column generation loop
+- **Current Setting**:
+  ```svelte
+  {@const animationDuration = 80 + (colIndex % 5) * 10}
+  ```
+
+#### How to adjust:
+
+- **Lower values** = faster scrolling
+- **Higher values** = slower scrolling
+
+#### Customization options:
+
+1. **Simple adjustment**: Modify the base duration (80) and variation (10):
+
+   ```svelte
+   // Faster scrolling
+   {@const animationDuration = 30 + (colIndex % 5) * 5}
+
+   // Slower scrolling
+   {@const animationDuration = 120 + (colIndex % 5) * 15}
+   ```
+
+2. **Advanced customization**: Add reactive variables to the script section:
+
+   ```svelte
+   // Add to script section let baseScrollSpeed = $state(80); // Base animation duration in seconds
+   let scrollVariation = $state(10); // Amount of variation between columns // Then in your template
+   {@const animationDuration = baseScrollSpeed + (colIndex % 5) * scrollVariation}
+   ```
+
+This allows easy speed adjustments from a central location and could be extended with UI controls.
 
 ## Feedback
 

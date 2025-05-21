@@ -111,22 +111,35 @@
 	{/if}
 </div>
 
-<!-- Modal remains unchanged -->
+<!-- Responsive Modal -->
 {#if selected}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-2 sm:p-4"
 		on:click={() => (selected = null)}
 	>
 		<div
-			class="w-full max-w-3xl rounded bg-zinc-900 p-6 text-white shadow-xl"
+			class="relative max-h-[90vh] w-full max-w-3xl overflow-auto rounded bg-zinc-900 p-3 text-white shadow-xl sm:p-4 md:p-6"
 			on:click|stopPropagation
 		>
-			<img
-				src={fullUrl(selected.originalImageId)}
-				alt={selected.prompt}
-				class="mb-4 w-full rounded"
-			/>
-			<div class="mb-4 flex items-center justify-end">
+			<!-- Close button -->
+			<button
+				class="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white sm:top-3 sm:right-3 md:top-4 md:right-4"
+				on:click={() => (selected = null)}
+			>
+				✕
+			</button>
+
+			<!-- Image container -->
+			<div class="mt-2 overflow-hidden rounded">
+				<img
+					src={fullUrl(selected.originalImageId)}
+					alt={selected.prompt}
+					class="w-full object-contain"
+				/>
+			</div>
+
+			<!-- View original button -->
+			<div class="mt-3 flex items-center justify-end sm:mt-4">
 				<a
 					href={fullUrl(selected.originalImageId)}
 					target="_blank"
@@ -135,11 +148,16 @@
 					View Original
 				</a>
 			</div>
-			<div class="flex flex-wrap gap-2 font-mono text-xs">
+
+			<!-- Tags -->
+			<div class="mt-3 flex flex-wrap gap-2 font-mono text-xs sm:mt-4">
 				{#each selected.tags as tag}
 					<span
-						class="cursor-pointer rounded bg-zinc-700 px-2 py-0.5 hover:bg-zinc-600"
-						on:click={() => (searchTerm = tag)}>{tag}</span
+						class="cursor-pointer rounded bg-zinc-700 px-2 py-1 hover:bg-zinc-600"
+						on:click={() => {
+							searchTerm = tag;
+							selected = null;
+						}}>{tag}</span
 					>
 				{/each}
 			</div>

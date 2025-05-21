@@ -1,37 +1,24 @@
-// src/routes/gallery/+page.server.ts
-
+import { createAppwrite } from '$lib/appwrite'; // ✅ Use your helper
 import type { ServerLoad } from '@sveltejs/kit';
-import { createAppwrite } from '$lib/appwrite';
-
-type WebpDoc = {
-	$id: string;
-	prompt: string;
-	webpImageId: string;
-	originalImageId: string;
-};
-
-const dbId = '682b89cc0016319fcf30';
-const collectionId = '682cf95a00397776afa6'; // your gallery collection
-const tagCollectionId = '682d7b240022ba63cd02'; // your tag document collection
+import { Query } from 'node-appwrite';
 
 export const load: ServerLoad = async () => {
-	const { databases } = createAppwrite();
+	const { databases, storage } = createAppwrite(); // ✅ Get services from factory
 
-	// Fetch gallery images
-	const galleryRes = await databases.listDocuments(dbId, collectionId);
-	const images: WebpDoc[] = galleryRes.documents as WebpDoc[];
+	const collectionId = '682b8a1a003b15611710';
+	const databaseId = '682b89cc0016319fcf30';
+	const bucketId = '682b8a3a001fb3d3e9f2';
 
-	// Fetch tags
-	const tagRes = await databases.listDocuments(dbId, tagCollectionId);
-	const tagMap = new Map(tagRes.documents.map((doc: any) => [doc.imageId, doc.tags]));
+	// Fetch up to 100 documents instead of default 25
+	const images = await databases.listDocuments(databaseId, collectionId, [Query.limit(100)]);
 
-	const gallery = images.map((doc) => ({
+	const mapped = images.documents.map((doc: any) => ({
 		id: doc.$id,
 		prompt: doc.prompt,
-		previewImageId: doc.webpImageId,
-		originalImageId: doc.originalImageId,
-		tags: tagMap.get(doc.webpImageId) ?? []
+		imageUrl: storage.getFilePreview(bucketId, doc.imageId)
 	}));
 
-	return { gallery };
+	return {
+		gallery: mapped
+	};
 };

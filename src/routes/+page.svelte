@@ -49,11 +49,15 @@
 
 	<!-- === CENTRE LOGO === -->
 	<div class="relative z-20 flex h-full w-full flex-col items-center justify-center">
-		<!-- The main logo of the page with a glowing animation. -->
+		<!-- The main logo of the page with a popping animation. -->
 		<h1
-			class="animate-logoGlow mb-6 text-5xl font-bold text-yellow-400 drop-shadow-[0_0_8px_#fbc21b] select-none sm:text-6xl md:text-7xl 2xl:text-8xl"
+			class="logo mb-6 text-5xl font-bold text-yellow-400 drop-shadow-[0_0_8px_#fbc21b] select-none sm:text-6xl md:text-7xl 2xl:text-8xl"
 		>
-			BlobPics
+			{#each 'BlobPics'.split('') as letter, index}
+				<span class="animate-pop inline-block" style="animation-delay: {index * 0.2}s"
+					>{letter}</span
+				>
+			{/each}
 		</h1>
 
 		<!-- Gallery button -->
@@ -79,23 +83,22 @@
 		}
 	}
 
-	/* Glowing logo pulse animation for the main logo. */
-	@keyframes logoGlow {
-		0%,
-		100% {
-			text-shadow:
-				0 0 8px #fbc21b,
-				/* Small glow at start/end. */ 0 0 20px #fbc21b99; /* Fainter outer glow. */
+	/* Popping animation for each letter */
+	@keyframes pop {
+		0% {
+			transform: scale(1); /* Normal size */
 		}
 		50% {
-			text-shadow:
-				0 0 14px #fbc21b,
-				/* Stronger glow at midpoint. */ 0 0 32px #fbc21b; /* Brighter outer glow. */
+			transform: scale(1.3); /* Enlarged size */
+		}
+		100% {
+			transform: scale(1); /* Back to normal size */
 		}
 	}
 
-	/* Apply the glowing animation to the logo. */
-	.animate-logoGlow {
-		animation: logoGlow 2.4s ease-in-out infinite; /* Smooth infinite animation. */
+	/* Apply the popping animation to each letter */
+	.animate-pop {
+		animation: pop 1.2s ease-in-out infinite;
+		display: inline-block;
 	}
 </style>

@@ -47,7 +47,7 @@
 </script>
 
 <div
-	class="fixed top-0 left-0 z-50 w-full bg-black/70 px-4 py-3 text-center backdrop-blur-sm md:py-4"
+	class="fixed top-0 left-0 z-50 w-full bg-gray-900 px-4 py-3 text-center backdrop-blur-sm md:py-4"
 >
 	<div class="flex flex-col items-center justify-center gap-2">
 		<a href="/" class="inline-block">
@@ -93,7 +93,7 @@
 						src={previewUrl(item.previewImageId)}
 						alt={item.prompt}
 						draggable={false}
-						class="rounded shadow transition group-hover:brightness-110"
+						class="rounded shadow transition group-hover:brightness-50"
 					/>
 				</button>
 			{/each}

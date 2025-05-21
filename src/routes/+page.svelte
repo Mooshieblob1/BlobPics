@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte'; // Retained for potential future use, though not strictly needed with bind:clientWidth
+
 	// Props coming from +page.server.ts
 	let {
 		data
@@ -8,36 +10,58 @@
 
 	// Function to shuffle the gallery array randomly.
 	function shuffleArray<T>(array: T[]): T[] {
+		if (!array || array.length === 0) return [];
 		return array
 			.map((item) => ({ item, sort: Math.random() }))
 			.sort((a, b) => a.sort - b.sort)
 			.map(({ item }) => item);
 	}
 
-	// Shuffle the gallery array and store it in `shuffledGallery`.
-	const shuffledGallery = shuffleArray(data.gallery);
+	// Screen width, bound to the main container. Initialized with $state for Svelte 5.
+	let screenWidth = $state(0);
 
-	// Maximum number of columns at largest breakpoint
-	const maxColumns = 8;
-	
 	// Number of images per column for the film roll effect
 	const imagesPerColumn = 10;
 
-	// Create arrays of images for each column
-	const columnImages = Array(maxColumns).fill(0).map((_, colIndex) => {
-		// Create a different sequence of images for each column
-		return shuffleArray([...data.gallery]).slice(0, imagesPerColumn);
+	// Reactive calculation for number of columns based on screen width
+	// These breakpoints match common TailwindCSS breakpoints.
+	let numColumns = $derived.by(() => {
+		if (screenWidth === 0) return 2; // Default before clientWidth is bound or for SSR
+		if (screenWidth < 640) return 2;    // xs to sm
+		if (screenWidth < 768) return 3;    // sm to md
+		if (screenWidth < 1024) return 4;   // md to lg
+		if (screenWidth < 1280) return 6;   // lg to xl
+		if (screenWidth < 1536) return 7;   // xl to 2xl
+		return 8;                           // 2xl and larger
+	});
+
+	// Reactive calculation for column width
+	let columnWidth = $derived(screenWidth > 0 && numColumns > 0 ? screenWidth / numColumns : 0);
+
+	// Reactive calculation for image height to maintain 2:3 aspect ratio (width:height)
+	// Image Height = Column Width * (3/2)
+	let imageHeight = $derived(columnWidth * 1.5);
+
+	// Create arrays of images for each column, reactive to numColumns and data.gallery
+	let columnImages = $derived.by(() => {
+		if (!data?.gallery || numColumns <= 0 || data.gallery.length === 0) return [];
+		return Array(numColumns).fill(null).map(() => {
+			// Create a different sequence of images for each column
+			return shuffleArray([...data.gallery]).slice(0, imagesPerColumn);
+		});
 	});
 </script>
 
 <!-- === FULL-SCREEN GRID === -->
-<div class="relative h-screen w-screen overflow-hidden bg-black">
+<div class="relative h-screen w-screen overflow-hidden bg-black" bind:clientWidth={screenWidth}>
 	<!-- Grid container for displaying image columns -->
+	{#if screenWidth > 0 && imageHeight > 0} <!-- Ensure dimensions are calculated before rendering grid -->
 	<div
-		class="absolute inset-0 grid grid-cols-2 gap-[2px] sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8"
+		class="absolute inset-0 grid gap-[2px]"
+		style={`grid-template-columns: repeat(${numColumns}, 1fr);`}
 	>
 		<!-- Create columns of scrolling images -->
-		{#each Array(maxColumns) as _, colIndex}
+		{#each columnImages as imagesForThisColumn, colIndex (colIndex)}
 			{@const animationDuration = 30 + (colIndex % 5) * 5}
 			{@const direction = colIndex % 2 === 0 ? 'down' : 'up'}
 			
@@ -47,8 +71,8 @@
 					style={`animation-duration: ${animationDuration}s;`}
 				>
 					<!-- Original set of images -->
-					{#each columnImages[colIndex] as image}
-						<div class="h-[20vh]">
+					{#each imagesForThisColumn as image (image.id)}
+						<div style={`height: ${imageHeight}px; width: 100%;`}>
 							<img
 								src={image.imageUrl}
 								alt={image.prompt}
@@ -59,8 +83,8 @@
 					{/each}
 					
 					<!-- Duplicate the same images for seamless loop -->
-					{#each columnImages[colIndex] as image}
-						<div class="h-[20vh]">
+					{#each imagesForThisColumn as image (`${image.id}-duplicate`)}
+						<div style={`height: ${imageHeight}px; width: 100%;`}>
 							<img
 								src={image.imageUrl}
 								alt={image.prompt}
@@ -73,6 +97,7 @@
 			</div>
 		{/each}
 	</div>
+	{/if}
 
 	<!-- === FULL PAGE DARK OVERLAY === -->
 	<div class="pointer-events-none absolute inset-0 z-10 bg-black/60"></div>
@@ -102,8 +127,7 @@
 	/* Film column container */
 	.film-column {
 		position: relative;
-		overflow: hidden;
-		height: 100%;
+		height: 100%; 
 	}
 
 	/* Film strip containing all images */
@@ -131,7 +155,7 @@
 			transform: translateY(0);
 		}
 		100% {
-			transform: translateY(-50%); /* Move up by half the height */
+			transform: translateY(-50%); /* Move up by half the height of the film-strip */
 		}
 	}
 

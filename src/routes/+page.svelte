@@ -18,16 +18,19 @@
 
 	// Shuffle the gallery array and store it in `shuffledGallery`.
 	const shuffledGallery = shuffleArray(data.gallery);
+
+	// Maximum number of columns at largest breakpoint
+	const maxColumns = 8;
 </script>
 
 <!-- === FULL-SCREEN GRID === -->
 <div class="relative h-screen w-screen overflow-hidden bg-black">
 	<!-- Grid container for displaying images -->
 	<div
-		class="absolute inset-0 grid auto-rows-[20vh] grid-cols-2 gap-[2px] sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
+		class="absolute inset-0 grid auto-rows-[20vh] grid-cols-2 gap-[2px] sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8"
 	>
 		<!-- Generate a grid of images. The number of images is calculated dynamically. -->
-		{#each Array(Math.ceil((100 / 20) * 6)) as _, i}
+		{#each Array(Math.ceil((100 / 20) * maxColumns)) as _, i}
 			<!-- Dynamically set image source and alt text from shuffled gallery -->
 			<!-- Disable dragging of images -->
 			<img
@@ -48,7 +51,7 @@
 	<div class="relative z-20 flex h-full w-full flex-col items-center justify-center">
 		<!-- The main logo of the page with a glowing animation. -->
 		<h1
-			class="animate-logoGlow mb-6 text-5xl font-bold text-yellow-400 drop-shadow-[0_0_8px_#fbc21b] select-none sm:text-6xl"
+			class="animate-logoGlow mb-6 text-5xl font-bold text-yellow-400 drop-shadow-[0_0_8px_#fbc21b] select-none sm:text-6xl md:text-7xl 2xl:text-8xl"
 		>
 			BlobPics
 		</h1>
@@ -56,7 +59,7 @@
 		<!-- Gallery button -->
 		<a
 			href="/gallery"
-			class="rounded-lg bg-yellow-400 px-6 py-3 font-bold text-black shadow-lg transition-all duration-300 hover:bg-yellow-500"
+			class="rounded-lg bg-yellow-400 px-6 py-3 font-bold text-black shadow-lg transition-all duration-300 hover:bg-yellow-500 2xl:px-8 2xl:py-4 2xl:text-xl"
 		>
 			View Gallery
 		</a>

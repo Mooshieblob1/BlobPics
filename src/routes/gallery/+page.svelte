@@ -32,7 +32,7 @@
 <div class="pt-16 md:pt-20">
 	<!-- Gallery Grid -->
 	<div
-		class="columns-1 gap-4 px-3 py-6 sm:columns-2 sm:gap-6 sm:px-6 sm:py-8 md:gap-8 md:px-8 md:py-10 lg:columns-3"
+		class="columns-1 gap-4 px-3 py-6 sm:columns-2 sm:gap-6 sm:px-6 sm:py-8 md:gap-8 md:px-8 md:py-10 lg:columns-4 2xl:columns-5 2xl:max-w-screen-2xl 2xl:mx-auto"
 	>
 		{#each data.gallery as item}
 			<a
@@ -45,7 +45,7 @@
 					src={previewUrl(item.previewImageId)}
 					alt={item.prompt}
 					loading="lazy"
-					class="h-full w-full object-cover transition duration-300 ease-in-out group-hover:brightness-90"
+					class="w-30vh h-full object-cover transition duration-300 ease-in-out group-hover:brightness-90"
 				/>
 
 				<div

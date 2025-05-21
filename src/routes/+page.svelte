@@ -52,6 +52,8 @@
 				return shuffleArray([...data.gallery]).slice(0, imagesPerColumn);
 			});
 	});
+
+	const currentYear = new Date().getFullYear();
 </script>
 
 <!-- === FULL-SCREEN GRID === -->
@@ -104,6 +106,13 @@
 
 	<!-- === FULL PAGE DARK OVERLAY === -->
 	<div class="pointer-events-none absolute inset-0 z-10 bg-black/60"></div>
+
+	<!-- === COPYRIGHT TEXT === -->
+	<p
+		class="absolute bottom-2 left-1/2 z-[15] -translate-x-1/2 transform whitespace-nowrap rounded bg-black/50 px-3 py-1 text-[10px] leading-tight text-gray-300 shadow-md sm:text-xs"
+	>
+		© {currentYear} BlobPics. All rights reserved.
+	</p>
 
 	<!-- === CENTRE LOGO === -->
 	<div class="relative z-20 flex h-full w-full flex-col items-center justify-center">

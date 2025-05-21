@@ -17,6 +17,9 @@ importers:
       motion:
         specifier: ^12.12.1
         version: 12.12.1
+      node-appwrite:
+        specifier: ^17.0.0
+        version: 17.0.0
     devDependencies:
       '@eslint/compat':
         specifier: ^1.2.5
@@ -1387,6 +1390,12 @@ packages:
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+
+  node-appwrite@17.0.0:
+    resolution: {integrity: sha512-5Moi5ENPnoAfU1/6CZP9K2NTuB6Nm3dSyhokno+24RDuP7czjXCdwzfeyjmyHieggbrLkN89AYSOv9W1XkCL9w==}
+
+  node-fetch-native-with-agent@1.7.2:
+    resolution: {integrity: sha512-5MaOOCuJEvcckoz7/tjdx1M6OusOY6Xc5f459IaruGStWnKzlI1qpNgaAwmn4LmFYcsSlj+jBMk84wmmRxfk5g==}
 
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
@@ -2950,6 +2959,12 @@ snapshots:
   nanoid@3.3.11: {}
 
   natural-compare@1.4.0: {}
+
+  node-appwrite@17.0.0:
+    dependencies:
+      node-fetch-native-with-agent: 1.7.2
+
+  node-fetch-native-with-agent@1.7.2: {}
 
   ohash@2.0.11: {}
 

@@ -45,6 +45,7 @@
 	"dependencies": {
 		"@motionone/svelte": "^10.16.4",
 		"appwrite": "^18.0.0",
-		"motion": "^12.12.1"
+		"motion": "^12.12.1",
+		"node-appwrite": "^17.0.0"
 	}
 }

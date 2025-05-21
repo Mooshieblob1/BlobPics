@@ -1,38 +1,34 @@
-# sv
+# BlobPics
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+BlobPics is a responsive image gallery application designed to showcase your photos in a clean, modern interface that adapts to any screen size.
 
-## Creating a project
+## About
 
-If you're seeing this, you've probably already done this step. Congrats!
+BlobPics provides a simple yet powerful platform for displaying and organizing images. The responsive design ensures your gallery looks great on desktop computers, tablets, and mobile devices.
 
-```bash
-# create a new project in the current directory
-npx sv create
+## Features
 
-# create a new project in my-app
-npx sv create my-app
-```
+### Current Features
 
-## Developing
+- Responsive image display that adapts to different screen sizes
+- Clean, intuitive user interface
+- Fast image loading and browsing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Coming Soon
 
-```bash
-npm run dev
+- Image upload functionality [WIP]
+- Tagging system for easy organization and filtering [WIP]
+- Search capabilities
+- User accounts and galleries
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Technology
 
-## Building
+BlobPics is built with modern web technologies to ensure performance, accessibility, and ease of use.
 
-To create a production version of your app:
+## Development Status
 
-```bash
-npm run build
-```
+This project is currently under active development. New features are being added regularly.
 
-You can preview the production build with `npm run preview`.
+## Feedback
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Feedback and contributions are welcome as we continue to develop and improve BlobPics.

@@ -41,14 +41,8 @@
 		{/each}
 	</div>
 
-	<!-- === SKEWED DARK OVERLAY === -->
-	<div class="pointer-events-none absolute inset-0 z-10 overflow-hidden">
-		<!-- A dark overlay with a skewed effect to add visual depth. -->
-		<div
-			class="absolute inset-0 bg-black/60"
-			style="transform: skewY(-4deg); transform-origin: top left;"
-		></div>
-	</div>
+	<!-- === FULL PAGE DARK OVERLAY === -->
+	<div class="pointer-events-none absolute inset-0 z-10 bg-black/60"></div>
 
 	<!-- === CENTRE LOGO === -->
 	<div class="relative z-20 flex h-full w-full items-center justify-center">

@@ -61,27 +61,43 @@
 					>
 						{#each imagesForThisColumn as image (image.id)}
 							<div style={`height: ${imageHeight}px; width: 100%;`}>
-								<img
-									src={getTransformedImageUrl(image.id)}
-									alt={image.prompt}
-									draggable={false}
-									loading="lazy"
-									class="h-full w-full object-cover blur-md brightness-[35%] filter transition duration-700 ease-in-out"
-									onload={(e) => (e.target as HTMLImageElement).classList.remove('blur-md')}
-								/>
+								<picture>
+									<source srcset={getTransformedImageUrl(image.id)} type="image/webp" />
+									<img
+										src={`https://blobpics.tech/images/${image.id}`}
+										alt={image.prompt}
+										draggable={false}
+										loading="lazy"
+										class="h-full w-full object-cover blur-md brightness-[35%] filter transition duration-700 ease-in-out"
+										onerror={(e) => {
+											const img = e.currentTarget as HTMLImageElement;
+											img.src = `https://blobpics.tech/images/${image.id}`;
+										}}
+										onload={(e) =>
+											(e.currentTarget as HTMLImageElement).classList.remove('blur-md')}
+									/>
+								</picture>
 							</div>
 						{/each}
 
 						{#each imagesForThisColumn as image (`${image.id}-duplicate`)}
 							<div style={`height: ${imageHeight}px; width: 100%;`}>
-								<img
-									src={getTransformedImageUrl(image.id)}
-									alt={image.prompt}
-									draggable={false}
-									loading="lazy"
-									class="h-full w-full object-cover blur-md brightness-[35%] filter transition duration-700 ease-in-out"
-									onload={(e) => (e.target as HTMLImageElement).classList.remove('blur-md')}
-								/>
+								<picture>
+									<source srcset={getTransformedImageUrl(image.id)} type="image/webp" />
+									<img
+										src={`https://blobpics.tech/images/${image.id}`}
+										alt={image.prompt}
+										draggable={false}
+										loading="lazy"
+										class="h-full w-full object-cover blur-md brightness-[35%] filter transition duration-700 ease-in-out"
+										onerror={(e) => {
+											const img = e.currentTarget as HTMLImageElement;
+											img.src = `https://blobpics.tech/images/${image.id}`;
+										}}
+										onload={(e) =>
+											(e.currentTarget as HTMLImageElement).classList.remove('blur-md')}
+									/>
+								</picture>
 							</div>
 						{/each}
 					</div>

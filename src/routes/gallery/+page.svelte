@@ -74,7 +74,7 @@
 		<a href="/gallery/upload" class="text-sm text-yellow-300 transition hover:text-yellow-200">
 			Upload Image
 		</a>
-
+		<p>Images loaded: {filteredGallery.length}</p>
 		<div class="relative w-full max-w-md">
 			<input
 				type="text"

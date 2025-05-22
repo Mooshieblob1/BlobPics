@@ -40,7 +40,7 @@
 
 	function getTransformedImageUrl(id: string) {
 		const width = screenWidth >= 1536 ? 1280 : 480;
-		return `https://cdn.blobpics.tech/cdn-cgi/image/width=${width},f=webp/images/${id}`;
+		return `https://cdn.blobpics.tech/cdn-cgi/image/width=${width},f=webp/${id}`;
 	}
 </script>
 

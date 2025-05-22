@@ -113,7 +113,7 @@
 				<button onclick={() => (selected = item)} class="group mb-4 block w-full text-left">
 					<picture>
 						<source
-							srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=480,f=webp/images/${item.previewImageId}`}
+							srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=480,f=webp/${item.previewImageId}`}
 							type="image/webp"
 						/>
 						<img
@@ -157,7 +157,7 @@
 
 			<picture>
 				<source
-					srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=1280,f=webp/images/${selected.originalImageId}`}
+					srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=1280,f=webp/${selected.originalImageId}`}
 					type="image/webp"
 				/>
 				<img

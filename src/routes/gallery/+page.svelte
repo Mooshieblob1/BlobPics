@@ -111,12 +111,22 @@
 		<div class="columns-1 gap-4 sm:columns-2 md:gap-6 lg:columns-3 xl:columns-4 2xl:columns-6">
 			{#each filteredGallery as item}
 				<button onclick={() => (selected = item)} class="group mb-4 block w-full text-left">
-					<img
-						src={`https://blobpics.tech/cdn-cgi/image/width=480,f=webp/images/${item.previewImageId}`}
-						alt={item.prompt}
-						draggable={false}
-						class="rounded shadow transition group-hover:brightness-50"
-					/>
+					<picture>
+						<source
+							srcset={`https://blobpics.tech/cdn-cgi/image/width=480,f=webp/images/${item.previewImageId}`}
+							type="image/webp"
+						/>
+						<img
+							src={`https://blobpics.tech/images/${item.previewImageId}`}
+							alt={item.prompt}
+							draggable={false}
+							class="rounded shadow transition group-hover:brightness-50"
+							onerror={(e) => {
+								const img = e.currentTarget as HTMLImageElement;
+								img.src = `https://blobpics.tech/images/${item.previewImageId}`;
+							}}
+						/>
+					</picture>
 				</button>
 			{/each}
 		</div>
@@ -145,11 +155,21 @@
 				✕
 			</button>
 
-			<img
-				src={`https://blobpics.tech/cdn-cgi/image/width=1280,f=webp/images/${selected.originalImageId}`}
-				alt={selected.prompt}
-				class="h-auto max-h-[65vh] w-auto max-w-full object-contain"
-			/>
+			<picture>
+				<source
+					srcset={`https://blobpics.tech/cdn-cgi/image/width=1280,f=webp/images/${selected.originalImageId}`}
+					type="image/webp"
+				/>
+				<img
+					src={`https://blobpics.tech/images/${selected.originalImageId}`}
+					alt={selected.prompt}
+					class="h-auto max-h-[65vh] w-auto max-w-full object-contain"
+					onerror={(e) => {
+						const img = e.currentTarget as HTMLImageElement;
+						img.src = `https://blobpics.tech/images/${selected.originalImageId}`;
+					}}
+				/>
+			</picture>
 
 			<div class="mt-4 flex w-full justify-end">
 				<a

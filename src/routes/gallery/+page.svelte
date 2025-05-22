@@ -113,17 +113,17 @@
 				<button onclick={() => (selected = item)} class="group mb-4 block w-full text-left">
 					<picture>
 						<source
-							srcset={`https://blobpics.tech/cdn-cgi/image/width=480,f=webp/images/${item.previewImageId}`}
+							srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=480,f=webp/images/${item.previewImageId}`}
 							type="image/webp"
 						/>
 						<img
-							src={`https://blobpics.tech/images/${item.previewImageId}`}
+							src={`https://cdn.blobpics.tech/${item.previewImageId}`}
 							alt={item.prompt}
 							draggable={false}
 							class="rounded shadow transition group-hover:brightness-50"
 							onerror={(e) => {
 								const img = e.currentTarget as HTMLImageElement;
-								img.src = `https://blobpics.tech/images/${item.previewImageId}`;
+								img.src = `https://cdn.blobpics.tech/${item.previewImageId}`;
 							}}
 						/>
 					</picture>
@@ -157,23 +157,23 @@
 
 			<picture>
 				<source
-					srcset={`https://blobpics.tech/cdn-cgi/image/width=1280,f=webp/images/${selected.originalImageId}`}
+					srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=1280,f=webp/images/${selected.originalImageId}`}
 					type="image/webp"
 				/>
 				<img
-					src={`https://blobpics.tech/images/${selected.originalImageId}`}
+					src={`https://cdn.blobpics.tech/${selected.originalImageId}`}
 					alt={selected.prompt}
 					class="h-auto max-h-[65vh] w-auto max-w-full object-contain"
 					onerror={(e) => {
 						const img = e.currentTarget as HTMLImageElement;
-						img.src = `https://blobpics.tech/images/${selected.originalImageId}`;
+						img.src = `https://cdn.blobpics.tech/${selected.originalImageId}`;
 					}}
 				/>
 			</picture>
 
 			<div class="mt-4 flex w-full justify-end">
 				<a
-					href={`https://blobpics.tech/images/${selected.originalImageId}`}
+					href={`https://cdn.blobpics.tech/${selected.originalImageId}`}
 					target="_blank"
 					class="rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black"
 				>

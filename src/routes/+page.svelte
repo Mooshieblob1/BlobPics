@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte'; // Retained for potential future use, though not strictly needed with bind:clientWidth
-
 	// Props coming from +page.server.ts
 	let {
 		data

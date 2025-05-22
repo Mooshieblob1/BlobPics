@@ -97,6 +97,7 @@
 	>
 		© {currentYear} BlobPics. All rights reserved.
 	</p>
+	<p>Images loaded: {filteredGallery.length}</p>
 
 	<div class="relative z-20 flex h-full w-full flex-col items-center justify-center">
 		<h1

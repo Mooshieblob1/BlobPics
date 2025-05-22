@@ -32,11 +32,10 @@ export const load: ServerLoad = async ({ fetch }) => {
 
 				return {
 					id: item.imageId,
+					imageUrl: item.imageId, // Used by both resized and fallback image URLs
 					prompt: item.prompt,
 					tags,
-					groupedTags,
-					previewImageId: item.imageId,
-					originalImageId: item.imageId
+					groupedTags
 				};
 			})
 		);

@@ -113,17 +113,17 @@
 				<button onclick={() => (selected = item)} class="group mb-4 block w-full text-left">
 					<picture>
 						<source
-							srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=480,f=webp/${item.previewImageId}`}
+							srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=480,f=webp/images/${item.previewImageId}`}
 							type="image/webp"
 						/>
 						<img
-							src={`https://cdn.blobpics.tech/${item.previewImageId}`}
+							src={`https://cdn.blobpics.tech/images/${item.previewImageId}`}
 							alt={item.prompt}
 							draggable={false}
 							class="rounded shadow transition group-hover:brightness-50"
 							onerror={(e) => {
 								const img = e.currentTarget as HTMLImageElement;
-								img.src = `https://cdn.blobpics.tech/${item.previewImageId}`;
+								img.src = `https://cdn.blobpics.tech/images/${item.previewImageId}`;
 							}}
 						/>
 					</picture>
@@ -131,6 +131,7 @@
 			{/each}
 		</div>
 	</div>
+
 	{#if filteredGallery.length === 0}
 		<div class="py-10 text-center text-white">
 			<p>No images found with the exact tag "{searchTerm}"</p>
@@ -157,23 +158,23 @@
 
 			<picture>
 				<source
-					srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=1280,f=webp/${selected.originalImageId}`}
+					srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=1280,f=webp/images/${selected.originalImageId}`}
 					type="image/webp"
 				/>
 				<img
-					src={`https://cdn.blobpics.tech/${selected.originalImageId}`}
+					src={`https://cdn.blobpics.tech/images/${selected.originalImageId}`}
 					alt={selected.prompt}
 					class="h-auto max-h-[65vh] w-auto max-w-full object-contain"
 					onerror={(e) => {
 						const img = e.currentTarget as HTMLImageElement;
-						img.src = `https://cdn.blobpics.tech/${selected.originalImageId}`;
+						img.src = `https://cdn.blobpics.tech/images/${selected.originalImageId}`;
 					}}
 				/>
 			</picture>
 
 			<div class="mt-4 flex w-full justify-end">
 				<a
-					href={`https://cdn.blobpics.tech/${selected.originalImageId}`}
+					href={`https://cdn.blobpics.tech/images/${selected.originalImageId}`}
 					target="_blank"
 					class="rounded bg-yellow-500 px-3 py-1 text-sm font-bold text-black"
 				>

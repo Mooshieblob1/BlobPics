@@ -16,10 +16,10 @@ export const load: ServerLoad = async ({ fetch }) => {
 			tags: string[];
 		}[] = await response.json();
 
-		// Reshape to match the home page's expectation
+		// Match format used by +page.svelte (filmstrip)
 		const gallery = rawItems.map((item) => ({
 			id: item.imageId,
-			imageUrl: item.imageId, // we'll build the full URL in the component
+			imageUrl: item.imageId,
 			prompt: item.prompt
 		}));
 

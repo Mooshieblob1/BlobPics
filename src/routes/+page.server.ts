@@ -1,20 +1,27 @@
-// src/routes/+page.server.ts
 import type { ServerLoad } from '@sveltejs/kit';
 
 export const load: ServerLoad = async ({ fetch }) => {
 	try {
-		const res = await fetch('/api/list');
+		const endpoint = import.meta.env.DEV ? 'https://blobpics.tech/api/list' : '/api/list';
 
-		if (!res.ok) {
-			console.error(`Failed to fetch gallery: ${res.status}`);
+		const response = await fetch(endpoint);
+		if (!response.ok) {
+			console.error(`Failed to fetch gallery: ${response.status}`);
 			return { gallery: [] };
 		}
 
-		const gallery: {
-			id: string;
+		const rawItems: {
+			imageId: string;
 			prompt: string;
-			imageUrl: string;
-		}[] = await res.json();
+			tags: string[];
+		}[] = await response.json();
+
+		// Reshape to match the home page's expectation
+		const gallery = rawItems.map((item) => ({
+			id: item.imageId,
+			imageUrl: item.imageId, // we'll build the full URL in the component
+			prompt: item.prompt
+		}));
 
 		return { gallery };
 	} catch (error) {

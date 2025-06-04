@@ -1,33 +1,15 @@
 <script lang="ts">
-	let {
-		data
-	}: {
-		data: {
-			gallery: {
-				id: string;
-				prompt: string;
-				previewImageId: string;
-				originalImageId: string;
-				tags: string[];
-				groupedTags?: {
-					general: [string, number][];
-					character?: any;
-					copyright?: any;
-					artist?: any;
-					meta?: any;
-					rating?: any;
-					unknown?: any;
-				};
-			}[];
-		};
-	} = $props();
+	import { dev } from '$app/environment';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 
 	let selected = $state<(typeof data.gallery)[0] | null>(null);
 	let searchTerm = $state('');
 	let showSuggestions = $state(false);
 
-	const tagCounts = $derived.by(() => {
-		return data.gallery.reduce(
+	const tagCounts = $derived.by(() =>
+		data.gallery.reduce(
 			(acc, item) => {
 				item.tags.forEach((tag) => {
 					acc[tag] = (acc[tag] || 0) + 1;
@@ -35,23 +17,23 @@
 				return acc;
 			},
 			{} as Record<string, number>
-		);
-	});
+		)
+	);
 
-	const filteredTags = $derived.by(() => {
-		return Object.entries(tagCounts)
+	const filteredTags = $derived.by(() =>
+		Object.entries(tagCounts)
 			.filter(([tag]) => !searchTerm.trim() || tag.toLowerCase().includes(searchTerm.toLowerCase()))
 			.sort((a, b) => b[1] - a[1])
-			.slice(0, 10);
-	});
+			.slice(0, 10)
+	);
 
-	const filteredGallery = $derived.by(() => {
-		return searchTerm
+	const filteredGallery = $derived.by(() =>
+		searchTerm
 			? data.gallery.filter((item) =>
 					item.tags.some((tag) => tag.toLowerCase() === searchTerm.toLowerCase())
 				)
-			: data.gallery;
-	});
+			: data.gallery
+	);
 
 	function selectTag(tag: string) {
 		searchTerm = tag;
@@ -112,18 +94,20 @@
 			{#each filteredGallery as item}
 				<button onclick={() => (selected = item)} class="group mb-4 block w-full text-left">
 					<picture>
-						<source
-							srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=480,f=webp/images/${item.previewImageId}`}
-							type="image/webp"
-						/>
+						{#if !dev}
+							<source
+								srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=480,f=webp/images/${item.previewImageId}`}
+								type="image/webp"
+							/>
+						{/if}
 						<img
 							src={`https://cdn.blobpics.tech/images/${item.previewImageId}`}
 							alt={item.prompt}
 							draggable={false}
 							class="rounded shadow transition group-hover:brightness-50"
 							onerror={(e) => {
-								const img = e.currentTarget as HTMLImageElement;
-								img.src = `https://cdn.blobpics.tech/images/${item.previewImageId}`;
+								(e.currentTarget as HTMLImageElement).src =
+									`https://cdn.blobpics.tech/images/${item.previewImageId}`;
 							}}
 						/>
 					</picture>
@@ -143,11 +127,23 @@
 {#if selected !== null}
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-2 sm:p-4"
-		onclick={() => (selected = null)}
+		role="dialog"
+		aria-modal="true"
+		onclick={(event) => {
+			if (event.target === event.currentTarget) {
+				selected = null;
+			}
+		}}
+		onkeydown={(e) => {
+			if (e.key === 'Escape') {
+				selected = null;
+			}
+		}}
+		tabindex="-1"
 	>
 		<div
 			class="relative flex max-h-[90vh] w-full max-w-5xl flex-col items-center overflow-hidden rounded bg-zinc-900 p-4 text-white shadow-xl"
-			onclick={(e) => e.stopPropagation()}
+			role="document"
 		>
 			<button
 				class="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white"
@@ -157,17 +153,21 @@
 			</button>
 
 			<picture>
-				<source
-					srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=1280,f=webp/images/${selected.originalImageId}`}
-					type="image/webp"
-				/>
+				{#if !dev}
+					<source
+						srcset={`https://cdn.blobpics.tech/cdn-cgi/image/width=1280,f=webp/images/${selected.originalImageId}`}
+						type="image/webp"
+					/>
+				{/if}
 				<img
 					src={`https://cdn.blobpics.tech/images/${selected.originalImageId}`}
 					alt={selected.prompt}
 					class="h-auto max-h-[65vh] w-auto max-w-full object-contain"
 					onerror={(e) => {
-						const img = e.currentTarget as HTMLImageElement;
-						img.src = `https://cdn.blobpics.tech/images/${selected.originalImageId}`;
+						if (selected) {
+							(e.currentTarget as HTMLImageElement).src =
+								`https://cdn.blobpics.tech/images/${selected.originalImageId}`;
+						}
 					}}
 				/>
 			</picture>
@@ -181,15 +181,14 @@
 					View Original
 				</a>
 			</div>
-
 			<div class="mt-3 flex w-full flex-wrap gap-2 font-mono text-xs">
 				{#each selected?.tags ?? [] as tag}
-					<span
+					<button
 						class="cursor-pointer rounded bg-zinc-700 px-2 py-1 hover:bg-zinc-600"
 						onclick={() => {
 							searchTerm = tag;
 							selected = null;
-						}}>{tag}</span
+						}}>{tag}</button
 					>
 				{/each}
 			</div>

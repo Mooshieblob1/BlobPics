@@ -1,48 +1,41 @@
+// src/routes/gallery/+page.server.ts
 import type { ServerLoad } from '@sveltejs/kit';
 
 export const load: ServerLoad = async ({ fetch }) => {
 	try {
-		const endpoint = import.meta.env.DEV ? 'https://blobpics.tech/api/list' : '/api/list';
+		// Always fetch from the production API since that's where CF serves the images
+		const endpoint = 'https://worker-blob.gpu.garden/api/list';
 
 		const response = await fetch(endpoint);
 		if (!response.ok) {
-			console.error('Failed to fetch gallery:', response.status, await response.text());
+			console.error(`Failed to fetch gallery: ${response.status}`);
 			return { gallery: [] };
 		}
 
-		const rawItems: { imageId: string; prompt: string }[] = await response.json();
+		// The API now returns objects shaped like:
+		// { id, prompt, previewImageId, originalImageId, tags, groupedTags }
+		const rawItems: Array<{
+			id: string;
+			prompt: string;
+			previewImageId?: string;
+			originalImageId?: string;
+			tags?: string[];
+			groupedTags?: Record<string, unknown>;
+		}> = await response.json();
 
-		const gallery = await Promise.all(
-			rawItems.map(async (item) => {
-				let tags: string[] = [];
-				const groupedTags: { general: [string, number][] } = { general: [] };
-
-				try {
-					const tagRes = await fetch(
-						`https://blobpics.tech/images/tags/complete/${item.imageId}.json`
-					);
-					if (tagRes.ok) {
-						const tagJson = await tagRes.json();
-						tags = tagJson.tags ?? [];
-						groupedTags.general = tagJson.groupedTags?.general ?? [];
-					}
-				} catch {
-					console.warn(`No tags for ${item.imageId}`);
-				}
-
-				return {
-					id: item.imageId,
-					imageUrl: item.imageId, // Used by both resized and fallback image URLs
-					prompt: item.prompt,
-					tags,
-					groupedTags
-				};
-			})
-		);
+		// Map directly into the shape your +page.svelte wants
+		const gallery = rawItems.map((item) => ({
+			id: item.id,
+			prompt: item.prompt,
+			previewImageId: item.previewImageId ?? item.id,
+			originalImageId: item.originalImageId ?? item.id,
+			tags: Array.isArray(item.tags) ? item.tags : [],
+			groupedTags: item.groupedTags ? item.groupedTags : {}
+		}));
 
 		return { gallery };
-	} catch (err) {
-		console.error('Error loading gallery:', err);
+	} catch (error) {
+		console.error('Error fetching gallery:', error);
 		return { gallery: [] };
 	}
 };

@@ -2,7 +2,7 @@ import type { ServerLoad } from '@sveltejs/kit';
 
 export const load: ServerLoad = async ({ fetch }) => {
 	try {
-		const endpoint = import.meta.env.DEV ? 'https://blobpics.tech/api/list' : '/api/list';
+		const endpoint = 'https://worker-blob.gpu.garden/api/list';
 
 		const response = await fetch(endpoint);
 		if (!response.ok) {
